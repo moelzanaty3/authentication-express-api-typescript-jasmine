@@ -12,6 +12,14 @@ class HttpException extends Error {
   }
 }
 
+/*
+interface Error {
+  status?: number;
+  name?: string;
+  message?: string;
+  stack?: string;
+}
+*/
 const errorMiddleware = (
   error: HttpException,
   req: Request,

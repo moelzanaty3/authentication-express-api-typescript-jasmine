@@ -3,8 +3,9 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import errorMiddleware from './middleware/error.middleware'
+import config from './config'
 
-const PORT = 3000
+const PORT = config.port || 3000
 // create an instance server
 const app: Application = express()
 // HTTP request logger middleware
