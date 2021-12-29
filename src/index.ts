@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import errorMiddleware from './middleware/error.middleware'
 
 const PORT = 3000
 // create an instance server
@@ -28,6 +29,17 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Hello World 🌍',
   })
 })
+
+// error handler middleware
+app.use(errorMiddleware)
+
+app.use((_: Request, res: Response) => {
+  res.status(404).json({
+    message:
+      'Ohh you are lost, read the API documentation to find your way back home 😂',
+  })
+})
+
 // start express server
 app.listen(PORT, () => {
   console.log(`Server is starting at prot:${PORT}`)
