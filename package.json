@@ -10,17 +10,23 @@
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
     "format": "prettier --write src/**/*.ts",
+    "test": "npm run build && jasmine",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint --fix"
   },
   "devDependencies": {
+    "@types/jasmine": "^3.10.2",
+    "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jasmine": "^3.10.0",
+    "jasmine-spec-reporter": "^7.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
+    "supertest": "^6.1.6",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"
   },
