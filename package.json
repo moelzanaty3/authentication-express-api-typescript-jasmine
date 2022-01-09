@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/jasmine": "^3.10.2",
     "@types/morgan": "^1.9.3",
+    "@types/pg": "^8.6.3",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
@@ -38,6 +39,7 @@
     "express": "^4.17.2",
     "express-rate-limit": "^6.0.1",
     "helmet": "^4.6.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pg": "^8.7.1"
   }
 }

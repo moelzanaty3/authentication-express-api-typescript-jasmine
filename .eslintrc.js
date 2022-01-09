@@ -18,7 +18,7 @@ module.exports = {
     'prettier/prettier': 2, // Means error
     semi: ['error', 'never'],
     quotes: ['error', 'single'],
-    'no-console': 1, // Means warning
+    'no-console': 0,
     'no-var': 'error',
     'prefer-const': 'error',
   },
