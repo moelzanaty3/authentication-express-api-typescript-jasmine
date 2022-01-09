@@ -5,11 +5,12 @@ import rateLimit from 'express-rate-limit'
 import errorMiddleware from './middleware/error.middleware'
 import config from './config'
 import routes from './routes'
-import db from './database'
 
 const PORT = config.port || 3000
 // create an instance server
 const app: Application = express()
+// Middleware to parses incoming requests with JSON payloads and is based on body-parser.
+app.use(express.json())
 // HTTP request logger middleware
 app.use(morgan('common'))
 // HTTP security middleware headers
@@ -28,23 +29,6 @@ app.use(
 
 app.use('/api', routes)
 
-// test db
-db.connect().then((client) => {
-  return client
-    .query('SELECT NOW()')
-    .then((res) => {
-      client.release()
-      console.log(res.rows[0].now)
-    })
-    .catch((err) => {
-      // Make sure to release the client before any error handling,
-      // just in case the error handling itself throws an error.
-      client.release()
-      console.log(err.stack)
-    })
-})
-
-  
 // add routing for / path
 app.get('/', (req: Request, res: Response) => {
   res.json({

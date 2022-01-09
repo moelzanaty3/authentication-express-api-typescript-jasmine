@@ -35,3 +35,17 @@ npx db-migrate create users-table --sql-file
 - \q Quit out of psql to normal terminal
 
 for more read [SQL Cheat Sheet](https://dataschool.com/learn-sql/meta-commands-in-psql/)
+
+## Notes 
+
+The best way to reset a sequence to start back with number 1 is to execute the following:
+
+```sql 
+ALTER SEQUENCE <tablename>_<id>_seq RESTART WITH 1
+```
+
+So, for example for the users table it would be:
+
+```sql 
+ALTER SEQUENCE users_id_seq RESTART WITH 1
+```

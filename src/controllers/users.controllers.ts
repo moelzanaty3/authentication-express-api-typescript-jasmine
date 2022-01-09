@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from 'express'
-import axios from 'axios'
+import UserModel from '../models/user.model'
 
-export const getUsers = async (
-  _req: Request,
+const userModel = new UserModel()
+
+export const create = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { data } = await axios(
-      'https://randomuser.me/api/?nat=us,CA&results=1'
-    )
-    res.status(200).json({
+    const user = await userModel.create(req.body)
+    res.json({
       status: 'success',
-      data: data.results,
-      message: 'Users retrieved successfully',
+      data: { ...user },
+      message: 'User created successfully',
     })
   } catch (err) {
     next(err)
