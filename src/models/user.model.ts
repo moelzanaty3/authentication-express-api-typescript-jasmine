@@ -1,5 +1,12 @@
+import bcrypt from 'bcrypt'
 import db from '../database'
 import User from '../types/user.type'
+import config from '../config'
+
+const hashPassword = (password: string) => {
+  const salt = parseInt(config.salt as string, 10)
+  return bcrypt.hashSync(`${password}${config.pepper}`, salt)
+}
 
 class UserModel {
   // create new user
@@ -7,14 +14,14 @@ class UserModel {
     try {
       const connection = await db.connect()
       const sql = `INSERT INTO users (email, user_name, first_name, last_name, password) 
-                   values ($1, $2, $3, $4, $5) 
-                   returning *`
+                  values ($1, $2, $3, $4, $5) 
+                  RETURNING id, email, user_name, first_name, last_name`
       const result = await connection.query(sql, [
         u.email,
         u.user_name,
         u.first_name,
         u.last_name,
-        u.password,
+        hashPassword(u.password as string),
       ])
       connection.release()
       return result.rows[0]
@@ -29,7 +36,7 @@ class UserModel {
   async getMany(): Promise<User[]> {
     try {
       const connection = await db.connect()
-      const sql = 'SELECT * FROM users'
+      const sql = 'SELECT id, user_name, first_name, last_name from users'
       const result = await connection.query(sql)
       connection.release()
       return result.rows
@@ -41,7 +48,8 @@ class UserModel {
   // get specific user
   async getOne(id: number): Promise<User> {
     try {
-      const sql = 'SELECT * FROM users WHERE id=($1)'
+      const sql = `SELECT id, user_name, first_name, last_name FROM users 
+      WHERE id=($1)`
 
       const connection = await db.connect()
 
@@ -58,15 +66,17 @@ class UserModel {
   async updateOne(u: User): Promise<User> {
     try {
       const connection = await db.connect()
-      const sql =
-        'UPDATE users SET email=$1, user_name=$2, first_name=$3, last_name=$4, password=$5 WHERE id=$6 RETURNING *'
+      const sql = `UPDATE users 
+                  SET email=$1, user_name=$2, first_name=$3, last_name=$4, password=$5 
+                  WHERE id=$6 
+                  RETURNING id, email, user_name, first_name, last_name`
 
       const result = await connection.query(sql, [
         u.email,
         u.user_name,
         u.first_name,
         u.last_name,
-        u.password,
+        hashPassword(u.password as string),
         u.id,
       ])
       connection.release()
@@ -82,7 +92,9 @@ class UserModel {
   async deleteOne(id: number): Promise<User> {
     try {
       const connection = await db.connect()
-      const sql = 'DELETE FROM users WHERE id=($1) RETURNING *'
+      const sql = `DELETE FROM users 
+                  WHERE id=($1) 
+                  RETURNING id, email, user_name, first_name, last_name`
 
       const result = await connection.query(sql, [id])
 
@@ -97,6 +109,34 @@ class UserModel {
   }
 
   // authenticate
+  async authenticate(
+    user_name: string,
+    password: string
+  ): Promise<User | null> {
+    try {
+      const connection = await db.connect()
+      const sql = 'SELECT password FROM users WHERE user_name=$1'
+      const result = await connection.query(sql, [user_name])
+      if (result.rows.length) {
+        const { password: hashPassword } = result.rows[0]
+        const isPasswordValid = bcrypt.compareSync(
+          `${password}${config.pepper}`,
+          hashPassword
+        )
+        if (isPasswordValid) {
+          const userInfo = await connection.query(
+            'SELECT id, email, user_name, first_name, last_name FROM users WHERE user_name=($1)',
+            [user_name]
+          )
+          return userInfo.rows[0]
+        }
+      }
+      connection.release()
+      return null
+    } catch (error) {
+      throw new Error(`Unable to login: ${(error as Error).message}`)
+    }
+  }
 }
 
 export default UserModel

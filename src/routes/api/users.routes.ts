@@ -8,5 +8,7 @@ routes.route('/').get(controllers.getMany)
 routes.route('/:id').get(controllers.getOne)
 routes.route('/:id').patch(controllers.updateOne)
 routes.route('/:id').delete(controllers.deleteOne)
+// authentication
+routes.route('/authenticate').post(controllers.authenticate)
 
 export default routes
