@@ -45,7 +45,7 @@ export const getOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.getOne(req.params.id as unknown as number)
+    const user = await userModel.getOne(req.params.id as unknown as string)
     res.json({
       status: 'success',
       data: user,
@@ -79,7 +79,7 @@ export const deleteOne = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.deleteOne(req.params.id as unknown as number)
+    const user = await userModel.deleteOne(req.params.id as unknown as string)
     res.json({
       status: 'success',
       data: user,
@@ -96,13 +96,13 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    const { user_name, password } = req.body
+    const { email, password } = req.body
 
-    const user = await userModel.authenticate(user_name, password)
+    const user = await userModel.authenticate(email, password)
     const token = jwt.sign({ user }, config.tokenSecret as unknown as string)
     if (!user) {
-      return res.json({
-        status: 'success',
+      return res.status(401).json({
+        status: 'error',
         message: 'the username and password do not match please try again',
       })
     }

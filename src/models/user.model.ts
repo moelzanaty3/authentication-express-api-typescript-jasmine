@@ -36,7 +36,8 @@ class UserModel {
   async getMany(): Promise<User[]> {
     try {
       const connection = await db.connect()
-      const sql = 'SELECT id, user_name, first_name, last_name from users'
+      const sql =
+        'SELECT id, email, user_name, first_name, last_name from users'
       const result = await connection.query(sql)
       connection.release()
       return result.rows
@@ -46,9 +47,9 @@ class UserModel {
   }
 
   // get specific user
-  async getOne(id: number): Promise<User> {
+  async getOne(id: string): Promise<User> {
     try {
-      const sql = `SELECT id, user_name, first_name, last_name FROM users 
+      const sql = `SELECT id, email, user_name, first_name, last_name FROM users 
       WHERE id=($1)`
 
       const connection = await db.connect()
@@ -89,7 +90,7 @@ class UserModel {
   }
 
   // delete user
-  async deleteOne(id: number): Promise<User> {
+  async deleteOne(id: string): Promise<User> {
     try {
       const connection = await db.connect()
       const sql = `DELETE FROM users 
@@ -109,14 +110,11 @@ class UserModel {
   }
 
   // authenticate
-  async authenticate(
-    user_name: string,
-    password: string
-  ): Promise<User | null> {
+  async authenticate(email: string, password: string): Promise<User | null> {
     try {
       const connection = await db.connect()
-      const sql = 'SELECT password FROM users WHERE user_name=$1'
-      const result = await connection.query(sql, [user_name])
+      const sql = 'SELECT password FROM users WHERE email=$1'
+      const result = await connection.query(sql, [email])
       if (result.rows.length) {
         const { password: hashPassword } = result.rows[0]
         const isPasswordValid = bcrypt.compareSync(
@@ -125,8 +123,8 @@ class UserModel {
         )
         if (isPasswordValid) {
           const userInfo = await connection.query(
-            'SELECT id, email, user_name, first_name, last_name FROM users WHERE user_name=($1)',
-            [user_name]
+            'SELECT id, email, user_name, first_name, last_name FROM users WHERE email=($1)',
+            [email]
           )
           return userInfo.rows[0]
         }

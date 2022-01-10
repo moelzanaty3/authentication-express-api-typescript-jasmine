@@ -11,7 +11,8 @@
     "start": "npm run build && node dist/index.js",
     "migration:run": "db-migrate up",
     "format": "prettier --write src/**/*.ts",
-    "test": "npm run build && jasmine",
+    "test": "export NODE_ENV=test && db-migrate up --env test && tsc && jasmine-ts && db-migrate down",
+    "test:window": "set NODE_ENV=test && db-migrate up --env test && tsc && jasmine-ts && db-migrate down",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint --fix"
   },
@@ -29,6 +30,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jasmine": "^3.10.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "supertest": "^6.1.6",
