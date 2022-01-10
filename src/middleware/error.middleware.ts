@@ -1,27 +1,8 @@
 import { Response, Request, NextFunction } from 'express'
+import Error from '../interfaces/error.interface'
 
-class HttpException extends Error {
-  status: number
-
-  message: string
-
-  constructor(status: number, message: string) {
-    super(message)
-    this.status = status
-    this.message = message
-  }
-}
-
-/*
-interface Error {
-  status?: number;
-  name?: string;
-  message?: string;
-  stack?: string;
-}
-*/
 const errorMiddleware = (
-  error: HttpException,
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
